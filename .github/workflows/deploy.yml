@@ -9,6 +9,7 @@ jobs:
   deploy_staging:
     name: Deploy to staging
     runs-on: ubuntu-latest
+    concurrency: staging
     environment:
       name: staging
       url: http://staging.tf.albert.nz
@@ -34,6 +35,7 @@ jobs:
   deploy_production:
     name: Deploy to production
     runs-on: ubuntu-latest
+    concurrency: production
     environment:
       name: production
       url: https://tf.albert.nz
