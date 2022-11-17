@@ -23,5 +23,5 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init -input=false
-      - run: terraform workspaces select tf-demo-preview-${{ github.event.pull_request.number }}
+      - run: terraform workspace select tf-demo-preview-${{ github.event.pull_request.number }}
       - run: terraform destroy -auto-approve -input=false
