@@ -5,18 +5,18 @@ on:
     types: [closed]
 
 jobs:
-  create_github_environment:
-    name: Remove environment
+  remove_review_app:
+    name: Remove on close
     concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     steps:
       - name: Delete environment
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GH_ADMIN_TOKEN }}
           script: |
-            github.rest.repos.deleteAnEnvironment({
+            github.rest.repos.removeLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              environment_name: "preview-${{ github.event.pull_request.number }}"
+              issue_number: "preview-${{ github.event.pull_request.number }}",
+              name: 'review app'
             })
