@@ -24,7 +24,9 @@ jobs:
     name: Deploy
     concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
-    environment: preview-${{ github.event.pull_request.number }}
+    environment:
+      name: preview-${{ github.event.pull_request.number }}
+      url: https://preview-${{ github.event.pull_request.number }}.tf.albert.nz
     needs: [create_github_environment]
     env:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

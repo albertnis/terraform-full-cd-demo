@@ -9,7 +9,9 @@ jobs:
   deploy_staging:
     name: Deploy to staging
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: staging
+      url: https://staging.tf.albert.nz
     env:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -32,7 +34,9 @@ jobs:
   deploy_production:
     name: Deploy to production
     runs-on: ubuntu-latest
-    environment: production
+    environment:
+      name: production
+      url: https://tf.albert.nz
     needs: [deploy_staging]
     env:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
