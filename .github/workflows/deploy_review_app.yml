@@ -1,4 +1,4 @@
-name: Deploy review app
+name: Review app
 
 on:
   pull_request:
@@ -6,9 +6,8 @@ on:
 
 jobs:
   create_github_environment:
-    name: Create GitHub review environment
+    name: Create
     runs-on: ubuntu-latest
-    permissions: write-all
     if: contains(github.event.pull_request.labels.*.name, 'review app')
     steps:
       - name: Create environment
@@ -22,7 +21,8 @@ jobs:
               environment_name: "preview-${{ github.event.pull_request.number }}"
             })
   deploy_review_app:
-    name: Deploy review app
+    name: Deploy
+    concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     environment: preview-${{ github.event.pull_request.number }}
     needs: [create_github_environment]
@@ -39,8 +39,8 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init -input=false
       - run: |
-          terraform workspaces new tf-demo-preview-${{ github.event.pull_request.number }} \
-            || terraform workspaces select tf-demo-preview-${{ github.event.pull_request.number }}
+          terraform workspace new tf-demo-preview-${{ github.event.pull_request.number }} \
+            || terraform workspace select tf-demo-preview-${{ github.event.pull_request.number }}
       - run: |
           terraform apply -auto-approve -input=false \
             -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
