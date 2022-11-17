@@ -14,6 +14,7 @@ jobs:
       - name: Create environment
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GH_ADMIN_TOKEN }}
           script: |
             github.rest.repos.createOrUpdateEnvironment({
               owner: context.repo.owner,
