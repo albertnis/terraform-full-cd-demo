@@ -22,6 +22,7 @@ jobs:
             })
   deploy_review_app:
     name: Deploy review app
+    concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     environment: preview-${{ github.event.pull_request.number }}
     needs: [create_github_environment]
