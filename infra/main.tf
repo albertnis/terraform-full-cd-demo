@@ -1,5 +1,13 @@
 # https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs
 terraform {
+  cloud {
+    organization = "albertnis"
+
+    workspaces {
+      tags = ["tf-demo"]
+    }
+  }
+
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -41,7 +49,7 @@ data "cloudflare_zone" "zone" {
 
 resource "cloudflare_worker_script" "script" {
   name    = "tf-script-${var.environment_name}-${terraform.workspace}"
-  content = file("../src/index.js")
+  content = file("./index.js")
   plain_text_binding {
     name = "ENV_NAME"
     text = var.environment_name
