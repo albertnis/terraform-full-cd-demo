@@ -17,7 +17,7 @@ jobs:
             github.rest.issues.removeLabel({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: "preview-${{ github.event.pull_request.number }}",
+              issue_number: "${{ github.event.pull_request.number }}",
               name: 'review app'
             })
   delete_github_environment:
