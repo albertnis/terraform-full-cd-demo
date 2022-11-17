@@ -7,6 +7,7 @@ on:
 jobs:
   destroy_review_app:
     name: Destroy review app
+    concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     if: github.event.label.name == 'review app'
     env:
@@ -39,7 +40,7 @@ jobs:
               repo: context.repo.repo,
               environment: "preview-${{ github.event.pull_request.number }}"
             })
-            console.log({ deployments })
+            console.log(JSON.stringify(deployments.data))
 
             const latest = deployments.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))[0]?.id
 
