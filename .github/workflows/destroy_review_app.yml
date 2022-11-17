@@ -30,7 +30,9 @@ jobs:
             -var="app_subdomain=preview-${{ github.event.pull_request.number }}.tf" \
             -var="domain=albert.nz" \
             -var="environment_name=development"
-      - run: terraform workspace delete tf-demo-preview-${{ github.event.pull_request.number }}
+      - run: |
+          terraform workspace select default
+          terraform workspace delete tf-demo-preview-${{ github.event.pull_request.number }}
       - name: Mark last deployment as inactive
         uses: actions/github-script@v6
         with:
