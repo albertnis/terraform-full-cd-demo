@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     env:
-      TF_WORKSPACE: tf-demo-staging
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     defaults:
       run:
         working-directory: infra
@@ -20,7 +21,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - run: terraform init -input=false
+      - run: terraform init -input=false -backend-config="key=staging/tfstate.json"
       - run: |
           terraform apply -auto-approve -input=false \
             -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
@@ -34,7 +35,8 @@ jobs:
     environment: production
     needs: [deploy_staging]
     env:
-      TF_WORKSPACE: tf-demo-production
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     defaults:
       run:
         working-directory: infra
@@ -43,7 +45,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - run: terraform init -input=false
+      - run: terraform init -input=false -backend-config="key=production/tfstate.json"
       - run: |
           terraform apply -auto-approve -input=false \
             -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
