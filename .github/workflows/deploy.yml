@@ -26,7 +26,8 @@ jobs:
     environment: production
     needs: [deploy_staging]
     defaults:
-      working-directory: infra
+      run:
+        working-directory: infra
     steps:
       - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v2
