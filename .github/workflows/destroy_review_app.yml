@@ -30,16 +30,11 @@ jobs:
             -var="app_subdomain=preview-${{ github.event.pull_request.number }}.tf" \
             -var="domain=albert.nz" \
             -var="environment_name=development"
-  mark_environment_inactive:
-    name: Mark environment as inactive
-    needs: [destroy_review_app]
-    runs-on: ubuntu-latest
-    steps:
-      - name: List deployments
+      - name: Mark last deployment as inactive
         uses: actions/github-script@v6
         with:
           script: |
-            const deployments = github.rest.repos.listDeployments({
+            const deployments = await github.rest.repos.listDeployments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               environment: "preview-${{ github.event.pull_request.number }}"
