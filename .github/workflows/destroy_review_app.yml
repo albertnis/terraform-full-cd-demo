@@ -8,6 +8,7 @@ jobs:
   destroy_review_app:
     name: Destroy review app
     runs-on: ubuntu-latest
+    permissions: write-all
     if: github.event.label.name == 'review app'
     environment: preview-${{ github.event.pull_request.number }}
     defaults:

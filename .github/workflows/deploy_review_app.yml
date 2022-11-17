@@ -8,11 +8,13 @@ jobs:
   create_github_environment:
     name: Create GitHub review environment
     runs-on: ubuntu-latest
+    permissions: write-all
     if: contains(github.event.pull_request.labels.*.name, 'review app')
     steps:
       - name: Create environment
         uses: actions/github-script@v6
         with:
+          github-token: ${{ secrets.GH_ADMIN_TOKEN }}
           script: |
             github.rest.repos.createOrUpdateEnvironment({
               owner: context.repo.owner,
