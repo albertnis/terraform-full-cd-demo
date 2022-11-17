@@ -1,4 +1,4 @@
-name: Deploy review app
+name: Review app
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   destroy_review_app:
-    name: Destroy review app
+    name: Destroy
     concurrency: deploy-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     if: github.event.label.name == 'review app'
@@ -40,16 +40,16 @@ jobs:
               repo: context.repo.repo,
               environment: "preview-${{ github.event.pull_request.number }}"
             })
-            console.log(JSON.stringify(deployments.data))
 
-            const latest = deployments.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))[0]?.id
+            const deployment_id = deployments.data[0]?.id
 
-            console.log({ latest })
+            console.log({ deployment_id })
 
-            if (latest) {
+            if (deployment_id) {
               github.rest.repos.createDeploymentStatus({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
+                deployment_id,
                 state: "inactive"
               })
             }
