@@ -8,7 +8,6 @@ jobs:
   destroy_review_app:
     name: Destroy review app
     runs-on: ubuntu-latest
-    permissions: write-all
     if: github.event.label.name == 'review app'
     environment: preview-${{ github.event.pull_request.number }}
     env:
@@ -31,3 +30,27 @@ jobs:
             -var="app_subdomain=preview-${{ github.event.pull_request.number }}.tf" \
             -var="domain=albert.nz" \
             -var="environment_name=development"
+  mark_environment_inactive:
+    name: Mark environment as inactive
+    needs: [destroy_review_app]
+    runs-on: ubuntu-latest
+    steps:
+      - name: List deployments
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const deployments = github.rest.repos.listDeployments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment: "preview-${{ github.event.pull_request.number }}"
+            }).sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+
+            const latest = deployments[0]?.id
+
+            if (latest) {
+              github.rest.repos.createDeploymentStatus({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: "inactive"
+              })
+            }
