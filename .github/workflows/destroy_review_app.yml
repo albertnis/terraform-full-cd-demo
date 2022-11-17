@@ -9,7 +9,6 @@ jobs:
     name: Destroy review app
     runs-on: ubuntu-latest
     if: github.event.label.name == 'review app'
-    environment: preview-${{ github.event.pull_request.number }}
     env:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
