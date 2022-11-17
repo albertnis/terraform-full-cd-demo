@@ -1,11 +1,9 @@
 # https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs
 terraform {
-  cloud {
-    organization = "albertnis"
-
-    workspaces {
-      tags = ["tf-demo"]
-    }
+  backend "s3" {
+    bucket = "terraform-full-cd-demo-state"
+    key    = "development/tfstate.json"
+    region = "ap-southeast-2"
   }
 
   required_providers {
@@ -49,7 +47,7 @@ data "cloudflare_zone" "zone" {
 
 resource "cloudflare_worker_script" "script" {
   name    = "tf-script-${var.environment_name}-${terraform.workspace}"
-  content = file("./index.js")
+  content = file("../src/worker.js")
   plain_text_binding {
     name = "ENV_NAME"
     text = var.environment_name
