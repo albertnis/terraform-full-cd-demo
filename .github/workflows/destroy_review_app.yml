@@ -24,4 +24,10 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init -input=false
       - run: terraform workspace select tf-demo-preview-${{ github.event.pull_request.number }}
-      - run: terraform destroy -auto-approve -input=false
+      - run: |
+          terraform destroy -auto-approve -input=false \
+            -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -var="cloudflare_account_id=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" \
+            -var="app_subdomain=preview-${{ github.event.pull_request.number }}.tf" \
+            -var="domain=albert.nz" \
+            -var="environment_name=development"
