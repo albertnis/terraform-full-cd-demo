@@ -1,0 +1,45 @@
+name: Deploy review app
+
+on:
+  pull_request:
+    types: [labeled, synchronize]
+
+jobs:
+  create_github_environment:
+    name: Create GitHub review environment
+    runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'review app')
+    steps:
+      - name: Create environment
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.repos.createOrUpdateEnvironment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment_name: "preview-${{ github.event.pull_request.number }}"
+            })
+  deploy_review_app:
+    name: Deploy review app
+    runs-on: ubuntu-latest
+    environment: preview-${{ github.event.pull_request.number }}
+    needs: [create_github_environment]
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - run: terraform init -input=false
+      - run: |
+          terraform workspaces new tf-demo-preview-${{ github.event.pull_request.number }} \
+            || terraform workspaces select tf-demo-preview-${{ github.event.pull_request.number }}
+      - run: |
+          terraform apply -auto-approve -input=false \
+            -var="cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -var="cloudflare_account_id=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" \
+            -var="app_subdomain=preview-${{ github.event.pull_request.number }}.tf" \
+            -var="domain=albert.nz" \
+            -var="environment_name=staging"

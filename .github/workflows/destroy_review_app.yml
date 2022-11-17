@@ -1,0 +1,23 @@
+name: Deploy review app
+
+on:
+  pull_request:
+    types: [unlabeled]
+
+jobs:
+  destroy_review_app:
+    name: Destroy review app
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'review app'
+    environment: preview-${{ github.event.pull_request.number }}
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - run: terraform init -input=false
+      - run: terraform workspaces select tf-demo-preview-${{ github.event.pull_request.number }}
+      - run: terraform destroy -auto-approve -input=false
