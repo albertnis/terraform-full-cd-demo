@@ -1,0 +1,22 @@
+name: Review app
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  create_github_environment:
+    name: Remove environment
+    concurrency: deploy-${{ github.event.pull_request.number }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete environment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GH_ADMIN_TOKEN }}
+          script: |
+            github.rest.repos.deleteAnEnvironment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              environment_name: "preview-${{ github.event.pull_request.number }}"
+            })
