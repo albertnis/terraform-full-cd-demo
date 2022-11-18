@@ -1,7 +1,7 @@
 const html = `<!DOCTYPE html>
 <body>
   <h1>Hello from this deployment</h1>
-  <h2>This is the new version</h2>
+  <h2>This is the brand new shiny version from the branch</h2>
   <p>The environment name is ${ENV_NAME}</p>
 </body>`;
 
