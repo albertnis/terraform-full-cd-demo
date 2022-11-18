@@ -20,3 +20,4 @@ A demonstration of "review apps" and production deployment flow built in Terrafo
 - After PR close, an action will attempt to remove the "review app" label
    - If the label is present it will remove the label but for some reason this does not trigger the "unlabelled" webhook which initiates terraform destroy
    - If the label is not present it will error out
+- Production does not have a separated plan. Typically planning to a tfplan file is recommended to ensure infra changes can be properly reviewed and applied deterministically.
